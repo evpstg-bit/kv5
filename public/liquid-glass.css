@@ -346,3 +346,135 @@ body::after {
   body::before { animation: none !important; }
   #app .quiz-card, #app button { transition: none !important; }
 }
+
+/* Editor question cards: intentional dark-indigo glass instead of neutral gray. */
+#app .edit-question-card {
+  padding: 23px 24px 24px !important;
+  margin: 16px 0 !important;
+  border-radius: 22px !important;
+  overflow: visible;
+}
+#app .edit-question-head {
+  gap: 12px !important;
+  margin: 0 0 18px !important;
+  padding: 0 0 13px !important;
+  border-bottom: 1px solid var(--lg-edge) !important;
+}
+#app .edit-question-card .field-label {
+  display: block;
+  margin: 12px 0 6px !important;
+  line-height: 1.4;
+}
+#app .edit-question-card > .field-label:first-of-type {
+  margin-top: 0 !important;
+}
+#app .edit-question-card .edit-answer-grid {
+  gap: 14px !important;
+  margin-top: 17px !important;
+}
+#app .edit-question-card .edit-answer {
+  padding: 15px !important;
+  border-radius: 15px !important;
+}
+#app .edit-question-card .edit-correct {
+  gap: 8px !important;
+  margin-top: 11px !important;
+  line-height: 1.45;
+}
+#app .edit-question-card .edit-question-time {
+  margin-top: 18px !important;
+}
+
+/* Dark editor surfaces are tinted indigo/navy—not flat gray. */
+:root.dark #app .edit-question-card {
+  color: #f3f2ff !important;
+  background: linear-gradient(145deg, rgba(34, 29, 67, .90) 0%, rgba(22, 27, 49, .92) 58%, rgba(17, 24, 43, .94) 100%) !important;
+  border: 1px solid rgba(164, 151, 255, .24) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(220, 215, 255, .10), inset 0 -1px 0 rgba(255,255,255,.025) !important;
+}
+:root.dark #app .edit-question-card .edit-question-head {
+  border-bottom-color: rgba(170, 158, 255, .17) !important;
+}
+:root.dark #app .edit-question-card .edit-question-number {
+  color: #d9d3ff !important;
+  background: linear-gradient(145deg, rgba(126, 107, 235, .30), rgba(83, 72, 160, .18)) !important;
+  border: 1px solid rgba(184, 172, 255, .24) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+:root.dark #app .edit-question-card .edit-answer {
+  background: linear-gradient(145deg, rgba(12, 19, 37, .72), rgba(23, 28, 52, .56)) !important;
+  border: 1px solid rgba(155, 149, 220, .17) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+:root.dark #app .edit-question-card .edit-answer:focus-within {
+  border-color: rgba(166, 151, 255, .48) !important;
+  box-shadow: 0 0 0 3px rgba(125, 103, 244, .10), inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+:root.dark #app .edit-question-card input:not([type="checkbox"]),
+:root.dark #app .edit-question-card textarea,
+:root.dark #app .edit-question-card input[type="number"] {
+  background: rgba(9, 14, 29, .58) !important;
+  border-color: rgba(180, 174, 226, .17) !important;
+  color: #f5f4ff !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+:root.dark #app .edit-question-card input:not([type="checkbox"]):focus,
+:root.dark #app .edit-question-card textarea:focus,
+:root.dark #app .edit-question-card input[type="number"]:focus {
+  border-color: rgba(172, 158, 255, .65) !important;
+  box-shadow: 0 0 0 3px rgba(132, 112, 255, .15), inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+/* Deletion is consistently signaled with a clear coral-red icon. */
+#app .edit-question-head .btn-icon.danger-action,
+#app .quiz-card-actions .btn-icon.danger-action {
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 38px;
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  color: #d93655 !important;
+  background: linear-gradient(145deg, rgba(255, 239, 242, .92), rgba(255, 224, 230, .66)) !important;
+  border: 1px solid rgba(217, 54, 85, .22) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.86), 0 3px 10px rgba(169, 46, 73, .055) !important;
+  font-size: 1.35rem !important;
+  font-weight: 650 !important;
+  line-height: 1 !important;
+  transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease !important;
+}
+#app .edit-question-head .btn-icon.danger-action:hover,
+#app .quiz-card-actions .btn-icon.danger-action:hover {
+  color: #b91f40 !important;
+  background: linear-gradient(145deg, #ffe7ec, #ffcfd9) !important;
+  border-color: rgba(217, 54, 85, .42) !important;
+  box-shadow: 0 5px 14px rgba(194, 35, 70, .13), inset 0 1px 0 rgba(255,255,255,.90) !important;
+  transform: translateY(-1px) !important;
+}
+:root.dark #app .edit-question-head .btn-icon.danger-action,
+:root.dark #app .quiz-card-actions .btn-icon.danger-action {
+  color: #ff9aaa !important;
+  background: linear-gradient(145deg, rgba(120, 35, 60, .36), rgba(81, 29, 48, .26)) !important;
+  border-color: rgba(255, 129, 151, .31) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 4px 12px rgba(0,0,0,.10) !important;
+}
+:root.dark #app .edit-question-head .btn-icon.danger-action:hover,
+:root.dark #app .quiz-card-actions .btn-icon.danger-action:hover {
+  color: #fff0f2 !important;
+  background: linear-gradient(145deg, rgba(183, 48, 79, .60), rgba(128, 31, 60, .52)) !important;
+  border-color: rgba(255, 146, 165, .52) !important;
+  box-shadow: 0 6px 17px rgba(135, 27, 58, .24), inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+#app .edit-question-head .btn-icon.danger-action:focus-visible,
+#app .quiz-card-actions .btn-icon.danger-action:focus-visible {
+  outline: 3px solid rgba(255, 119, 145, .56) !important;
+  outline-offset: 3px !important;
+}
+@media (max-width: 640px) {
+  #app .edit-question-card { padding: 17px 15px 18px !important; border-radius: 18px !important; }
+  #app .edit-question-card .edit-answer-grid { gap: 10px !important; }
+  #app .edit-question-card .edit-answer { padding: 13px !important; }
+}
