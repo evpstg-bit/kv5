@@ -6,7 +6,7 @@
 <script>try{if(localStorage.getItem('kviz-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script>
 <link rel="stylesheet" href="/tailwind.css">
 <link rel="stylesheet" href="/ui.css">
-<link rel="stylesheet" href="/liquid-glass.css?v=4">
+<link rel="stylesheet" href="/liquid-glass.css?v=5">
 </head><body><div id="app"><p class="c mut">Загрузка…</p></div>
 <script src="/xlsx.js"></script>
 <script src="/qr.js"></script>
@@ -337,13 +337,26 @@ function liveParticipantsPanel(){
  const correct=rows.reduce((n,p)=>n+(Number(p.correctN)||0),0);
  const accuracy=answered?Math.round(correct/answered*100):0;
  const currentAnswered=rows.filter(p=>p.ans).length;
- const stats=[
-  ['Участники',String(rows.length)],
-  ['В сети',`${online} / ${rows.length}`],
-  ['Всего ответов',String(answered)],
-  ['Точность',`${accuracy}%`]
+ const totalPoints=rows.reduce((n,p)=>n+(Number(p.score)||0),0);
+ const questionPoints=rows.reduce((n,p)=>n+(p.ans?(Number(p.pts)||0):0),0);
+ const totalFlags=rows.reduce((n,p)=>n+(Number(p.placed)||0),0);
+ const totalTiles=(S.stats||[]).reduce((n,t)=>n+(Number(t.tiles)||0),0);
+ const leader=[...rows].sort((a,b)=>kingdoms
+   ?((Number(b.placed)||0)-(Number(a.placed)||0)||((Number(b.correctN)||0)-(Number(a.correctN)||0)))
+   :((Number(b.score)||0)-(Number(a.score)||0)))[0];
+ const leadValue=leader?`<span class="host-live-leader-name" data-user-content="true">${esc(leader.name)}</span><small>${kingdoms?`${Number(leader.placed)||0} ${tr('флагов')}`:`${Number(leader.score)||0} ${tr('баллов')}`}</small>`:'<span>—</span>';
+ const stats=kingdoms?[
+  {label:'Флагов поставлено',value:String(totalFlags),cls:'is-points'},
+  {label:'Захвачено клеток',value:String(totalTiles),cls:'is-round-points'},
+  {label:'Правильные ответы',value:`${correct}/${answered}`,cls:'is-correct-count'},
+  {label:'Лидер по флагам',value:leadValue,cls:'is-leader',html:true}
+ ]:[
+  {label:'Сумма баллов',value:String(totalPoints),cls:'is-points'},
+  {label:'Баллы за вопрос',value:S.state==='results'?`+${questionPoints}`:'—',cls:'is-round-points'},
+  {label:'Правильные ответы',value:`${correct}/${answered}`,cls:'is-correct-count'},
+  {label:'Лидер по баллам',value:leadValue,cls:'is-leader',html:true}
  ];
- const summary=stats.map(([label,value])=>`<div class="host-live-stat"><span>${tr(label)}</span><b>${esc(value)}</b></div>`).join('');
+ const summary=stats.map(st=>`<div class="host-live-stat ${st.cls}"><span>${tr(st.label)}</span><b>${st.html?st.value:esc(st.value)}</b></div>`).join('');
  const players=rows.map((p,i)=>{
   const pCorrect=Number(p.correctN??p.correct)||0, pAnswered=Number(p.answeredN??p.answered)||0;
   const pAccuracy=pAnswered?Math.round(pCorrect/pAnswered*100):0;
@@ -361,8 +374,8 @@ function liveParticipantsPanel(){
    else {stateLabel='Неверно';stateClass='is-wrong'}
   }else if(pAnswered){stateLabel='Ответ отправлен';stateClass='is-done'};
   const team=kingdoms&&Number.isInteger(p.team)?`<span class="host-live-team" style="--team-color:var(--c${p.team})">${SH[p.team]} ${tr(KN[p.team])}</span>`:'';
-  const extra=kingdoms?`<span>${tr('Флаги')}: <b>${Number(p.placed)||0}</b></span>`:`<span>${tr('Очки')}: <b>${Number(p.score)||0}</b></span>`;
-  return `<article class="host-live-player"><div class="host-live-player-top"><div class="host-live-identity"><span class="host-live-avatar">${esc((p.name||'?').trim().slice(0,1).toUpperCase())}</span><div class="host-live-name"><b data-user-content="true">${esc(p.name)}</b><span class="host-live-presence ${p.online?'is-online':'is-offline'}"><i></i>${tr(p.online?'В сети':'Не в сети')}</span></div></div>${team}<button type="button" class="player-kick host-live-kick" title="${tr('Исключить игрока')}" aria-label="${tr('Исключить игрока')} ${esc(p.name)}" onclick="kick('${p.id}')">×</button></div><div class="host-live-player-stats">${extra}<span>${tr('Правильные ответы')}: <b>${pCorrect}/${pAnswered}</b></span><span>${tr('Точность')}: <b>${pAccuracy}%</b></span></div><div class="host-live-player-bottom"><span class="host-live-state ${stateClass}">${tr(stateLabel)}</span>${!kingdoms&&S.state==='results'&&p.ans&&Number.isFinite(p.pts)?`<span class="host-live-earned">+${p.pts}</span>`:''}</div></article>`;
+  const extra=kingdoms?`<span class="host-live-points-primary">${tr('Флаги')}: <b>${Number(p.placed)||0}</b></span>`:`<span class="host-live-points-primary">${tr('Баллы')}: <b>${Number(p.score)||0}</b></span>${S.state==='results'&&p.ans?`<span class="host-live-round-earned">${tr('За вопрос')}: <b>+${Number(p.pts)||0}</b></span>`:''}`;
+  return `<article class="host-live-player"><div class="host-live-player-top"><div class="host-live-identity"><span class="host-live-avatar">${esc((p.name||'?').trim().slice(0,1).toUpperCase())}</span><div class="host-live-name"><b data-user-content="true">${esc(p.name)}</b><span class="host-live-presence ${p.online?'is-online':'is-offline'}"><i></i>${tr(p.online?'В сети':'Не в сети')}</span></div></div>${team}<button type="button" class="player-kick host-live-kick" title="${tr('Исключить игрока')}" aria-label="${tr('Исключить игрока')} ${esc(p.name)}" onclick="kick('${p.id}')">×</button></div><div class="host-live-player-stats">${extra}<span>${tr('Правильные ответы')}: <b>${pCorrect}/${pAnswered}</b></span><span>${tr('Точность')}: <b>${pAccuracy}%</b></span></div><div class="host-live-player-bottom"><span class="host-live-state ${stateClass}">${tr(stateLabel)}</span></div></article>`;
  }).join('');
  return `<section class="card host-participant-panel host-live-panel" aria-live="polite"><div class="host-participant-heading"><div><span class="section-kicker">${tr('Статистика участников')}</span><h2>${tr('Игроки в игре')} <span class="host-live-total">${rows.length}</span></h2></div><div class="host-live-question-progress">${kingdoms?tr('Статистика обновляется автоматически'):`${tr('Ответили на текущий вопрос')}: <b>${currentAnswered}/${rows.length}</b>`}</div></div><div class="host-live-summary">${summary}</div><div class="host-live-player-list">${players||`<div class="host-live-empty">${tr('Пока нет ответов')}</div>`}</div></section>`;
 }
@@ -562,6 +575,13 @@ Object.assign(UI_TRANSLATIONS.en,{
 Object.assign(UI_TRANSLATIONS.zh,{
  'Статистика обновляется автоматически':'统计数据会自动更新',
  'Статистика участников':'参与者统计','Всего ответов':'提交答案数','Правильные ответы':'正确答案','Точность':'正确率','В сети':'在线','Не в сети':'离线','Ответили на текущий вопрос':'已回答本题','Ожидает ответа':'等待作答','Ответ отправлен':'已提交答案','Верно':'正确','Неверно':'错误','Не ответил':'未作答','Последний ответ верный':'上次回答正确','Последний ответ неверный':'上次回答错误','Пока нет ответов':'暂无答案','Флаги':'旗帜','Ответов':'答案数','Исключить игрока':'移除玩家','Игроки в игре':'游戏玩家','Вопрос':'问题','Очки':'积分','Исключить игрока из игры':'将玩家移出游戏'
+});
+
+Object.assign(UI_TRANSLATIONS.en,{
+ 'Сумма баллов':'Total points','Баллы за вопрос':'Points this question','Лидер по баллам':'Points leader','Баллы':'Points','баллов':'points','За вопрос':'This question','Флагов поставлено':'Flags placed','Захвачено клеток':'Tiles captured','Лидер по флагам':'Flag leader','флагов':'flags'
+});
+Object.assign(UI_TRANSLATIONS.zh,{
+ 'Сумма баллов':'总积分','Баллы за вопрос':'本题积分','Лидер по баллам':'积分领先者','Баллы':'积分','баллов':'积分','За вопрос':'本题得分','Флагов поставлено':'已放置旗帜','Захвачено клеток':'已占领格子','Лидер по флагам':'旗帜领先者','флагов':'面旗帜'
 });
 
 function tr(text){
