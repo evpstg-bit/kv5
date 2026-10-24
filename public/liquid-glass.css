@@ -1,0 +1,348 @@
+/*
+ * Liquid Glass visual layer for Квиз-арена.
+ * Loaded after ui.css so it deliberately overrides the legacy solid surfaces
+ * without touching application logic, translations, or gameplay state.
+ */
+:root {
+  --page-bg: #eef0fb;
+  --surface: rgba(255, 255, 255, .76);
+  --surface-soft: rgba(255, 255, 255, .48);
+  --surface-muted: rgba(255, 255, 255, .34);
+  --text-main: #191a31;
+  --text-soft: #545b78;
+  --text-muted: #737b97;
+  --line: rgba(255, 255, 255, .68);
+  --line-strong: rgba(128, 126, 185, .24);
+  --accent: #7163ed;
+  --accent-hover: #5d50d7;
+  --accent-button: #6c5ce7;
+  --accent-button-hover: #7d70f0;
+  --accent-soft: rgba(123, 110, 244, .12);
+  --accent-ink: #5748cb;
+  --surface-shadow: 0 18px 54px rgba(69, 73, 125, .11), 0 4px 16px rgba(53, 64, 114, .05), inset 0 1px 0 rgba(255,255,255,.9);
+  --surface-shadow-hover: 0 24px 62px rgba(69, 73, 125, .16), 0 7px 22px rgba(53,64,114,.075), inset 0 1px 0 rgba(255,255,255,.95);
+  --lg-surface: rgba(255, 255, 255, .57);
+  --lg-surface-strong: rgba(255, 255, 255, .76);
+  --lg-surface-soft: rgba(255, 255, 255, .36);
+  --lg-border: rgba(255, 255, 255, .84);
+  --lg-edge: rgba(125, 119, 198, .19);
+  --lg-specular: rgba(255, 255, 255, .9);
+  --lg-shadow: 0 22px 58px rgba(53, 62, 119, .12), 0 4px 15px rgba(44, 52, 102, .055), inset 0 1px 0 rgba(255,255,255,.92), inset 0 -1px 0 rgba(255,255,255,.26);
+  --lg-radius: 25px;
+}
+
+:root.dark {
+  --page-bg: #101324;
+  --surface: rgba(26, 31, 51, .78);
+  --surface-soft: rgba(30, 36, 58, .66);
+  --surface-muted: rgba(255,255,255,.075);
+  --text-main: #f3f4ff;
+  --text-soft: #c0c5dc;
+  --text-muted: #9ca4c2;
+  --line: rgba(255,255,255,.12);
+  --line-strong: rgba(255,255,255,.20);
+  --accent: #aaa0ff;
+  --accent-hover: #c0b9ff;
+  --accent-button: #7164e9;
+  --accent-button-hover: #8175f3;
+  --accent-soft: rgba(155, 143, 255, .15);
+  --accent-ink: #d5d0ff;
+  --surface-shadow: 0 18px 56px rgba(0,0,0,.28), 0 4px 15px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.12);
+  --surface-shadow-hover: 0 25px 70px rgba(0,0,0,.36), 0 7px 24px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.16);
+  --lg-surface: rgba(24, 29, 49, .65);
+  --lg-surface-strong: rgba(28, 34, 56, .84);
+  --lg-surface-soft: rgba(255,255,255,.055);
+  --lg-border: rgba(255,255,255,.16);
+  --lg-edge: rgba(173, 164, 255, .19);
+  --lg-specular: rgba(255,255,255,.15);
+  --lg-shadow: 0 24px 65px rgba(0,0,0,.30), 0 5px 18px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.16), inset 0 -1px 0 rgba(255,255,255,.035);
+}
+
+html { min-height: 100%; background: #edf0ff !important; }
+html.dark { background: #101324 !important; }
+body, html body, :root.dark body {
+  min-height: 100vh !important;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  color: var(--text-main) !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12vh -10vw;
+  z-index: 0;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+body::before {
+  background:
+    radial-gradient(ellipse at 13% 10%, rgba(153, 145, 255, .58) 0, rgba(153,145,255,0) 33%),
+    radial-gradient(ellipse at 82% 16%, rgba(100, 204, 232, .40) 0, rgba(100,204,232,0) 29%),
+    radial-gradient(ellipse at 68% 78%, rgba(211, 151, 255, .33) 0, rgba(211,151,255,0) 34%),
+    radial-gradient(ellipse at 20% 84%, rgba(113, 184, 255, .24) 0, rgba(113,184,255,0) 32%);
+  filter: blur(36px) saturate(125%);
+  opacity: .87;
+  animation: lg-ambient-drift 28s ease-in-out infinite alternate;
+}
+body::after {
+  inset: 0;
+  background-image:
+    linear-gradient(120deg, rgba(255,255,255,.12), transparent 35%, rgba(255,255,255,.08) 67%, transparent),
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.24), transparent 56%);
+  opacity: .78;
+}
+:root.dark body::before {
+  background:
+    radial-gradient(ellipse at 13% 10%, rgba(93, 78, 201, .36) 0, rgba(93,78,201,0) 35%),
+    radial-gradient(ellipse at 85% 14%, rgba(35, 126, 159, .25) 0, rgba(35,126,159,0) 32%),
+    radial-gradient(ellipse at 70% 81%, rgba(137, 70, 173, .23) 0, rgba(137,70,173,0) 34%),
+    radial-gradient(ellipse at 18% 80%, rgba(49, 90, 183, .20) 0, rgba(49,90,183,0) 32%);
+  opacity: .92;
+}
+:root.dark body::after {
+  background-image: linear-gradient(120deg, rgba(255,255,255,.035), transparent 38%, rgba(155,145,255,.035) 72%, transparent);
+  opacity: .7;
+}
+#app { position: relative !important; z-index: 1 !important; }
+
+/* Large, high-signal surfaces */
+#app .card,
+#app .entry-card,
+#app .quiz-preview,
+#app .home-guide,
+#app .auth-card,
+#app .stat-card,
+#app .quiz-card,
+#app .edit-settings-card,
+#app .edit-question-card,
+#app .library-toolbar,
+#app .dashboard-user,
+#app .dashboard-user-inline,
+#app .host-participant-panel,
+#app .host-participant,
+#app .editor-actions,
+#app .delete-dialog,
+#app .floating-score,
+#app .loading-state,
+#app .lb {
+  color: var(--text-main) !important;
+  background: linear-gradient(148deg, var(--lg-surface-strong), var(--lg-surface) 54%, var(--lg-surface-soft)) !important;
+  border: 1px solid var(--lg-border) !important;
+  box-shadow: var(--lg-shadow) !important;
+  -webkit-backdrop-filter: blur(23px) saturate(155%);
+  backdrop-filter: blur(23px) saturate(155%);
+}
+#app .card,
+#app .entry-card,
+#app .quiz-preview,
+#app .home-guide,
+#app .auth-card,
+#app .stat-card,
+#app .edit-settings-card,
+#app .edit-question-card,
+#app .delete-dialog { border-radius: var(--lg-radius) !important; }
+#app .quiz-card { border-radius: 21px !important; transition: border-color .24s ease, box-shadow .24s ease, transform .24s cubic-bezier(.2,.8,.2,1) !important; }
+#app .quiz-card:hover { border-color: rgba(134,125,242,.48) !important; box-shadow: var(--surface-shadow-hover) !important; transform: translateY(-2px) !important; }
+#app .stat-card { border-radius: 22px !important; }
+#app .stat-card-icon, #app .entry-icon, #app .edit-question-number, #app .score-spark {
+  border: 1px solid rgba(255,255,255,.52);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.58), 0 5px 14px rgba(78,75,146,.07);
+}
+#app .home-guide .guide-step { border-bottom-color: var(--lg-edge); }
+#app .edit-answer { background: var(--lg-surface-soft) !important; border-color: var(--lg-border) !important; border-radius: 16px !important; }
+#app .host-participant { box-shadow: 0 5px 17px rgba(52,63,120,.055), inset 0 1px 0 rgba(255,255,255,.58) !important; }
+#app .host-participant-panel { border-radius: 22px !important; }
+#app .editor-actions { border-radius: 22px !important; background: var(--lg-surface-strong) !important; }
+#app .lb { border-radius: 14px !important; margin: 5px 0; }
+#app .bar { background: rgba(126,129,168,.16) !important; border: 1px solid rgba(255,255,255,.32); border-radius: 999px !important; overflow: hidden; }
+#app .bar i { border-radius: inherit; box-shadow: 0 0 12px rgba(117,99,239,.48); }
+
+/* Floating control surface and navigation */
+#app .global-settings {
+  gap: 7px !important;
+  width: fit-content !important;
+  max-width: 100%;
+  margin: 0 0 18px auto !important;
+  padding: 6px !important;
+  border: 1px solid var(--lg-border) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, var(--lg-surface-strong), var(--lg-surface)) !important;
+  box-shadow: 0 12px 32px rgba(57,66,119,.09), inset 0 1px 0 var(--lg-specular) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+}
+#app .global-settings .language-picker { gap: 6px; padding-left: 5px; }
+#app .global-settings select,
+#app .global-settings .language-picker select {
+  color: var(--text-main) !important;
+  background: rgba(255,255,255,.26) !important;
+  border: 1px solid rgba(255,255,255,.48) !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.64) !important;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+:root.dark #app .global-settings select,
+:root.dark #app .global-settings .language-picker select { background: rgba(255,255,255,.055) !important; border-color: rgba(255,255,255,.12) !important; }
+#app .global-settings button.theme-toggle {
+  color: var(--text-main) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.68), rgba(255,255,255,.30)) !important;
+  border: 1px solid var(--lg-border) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 12px rgba(52,59,102,.07), inset 0 1px 0 rgba(255,255,255,.84) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+:root.dark #app .global-settings button.theme-toggle { background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.035)) !important; }
+#app .global-settings button.theme-toggle:hover { transform: translateY(-1px) !important; box-shadow: 0 7px 17px rgba(52,59,102,.12), inset 0 1px 0 var(--lg-specular) !important; }
+#app .app-topbar {
+  padding: 10px 12px !important;
+  border: 1px solid var(--lg-border) !important;
+  border-radius: 22px !important;
+  background: linear-gradient(135deg, var(--lg-surface-strong), var(--lg-surface)) !important;
+  box-shadow: 0 12px 34px rgba(59,66,119,.07), inset 0 1px 0 var(--lg-specular) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+  backdrop-filter: blur(22px) saturate(155%);
+}
+#app .brand-icon {
+  background: linear-gradient(145deg, rgba(255,255,255,.50), rgba(113,98,231,.92) 46%, rgba(74,61,190,.98)) !important;
+  border: 1px solid rgba(255,255,255,.62) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 8px 22px rgba(97,82,217,.27), inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+#app .topbar-tag, #app .dashboard-user-inline, #app .dashboard-user {
+  background: linear-gradient(135deg, var(--lg-surface-strong), var(--lg-surface)) !important;
+  border-color: var(--lg-border) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  backdrop-filter: blur(18px) saturate(145%);
+}
+
+/* Controls: glass under your fingertips, while the primary action stays obvious */
+#app input[type=text], #app input[type=password], #app input[type=number], #app input[type=search], #app input[type=email], #app textarea, #app select {
+  color: var(--text-main) !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.59), rgba(255,255,255,.31)) !important;
+  border: 1px solid rgba(255,255,255,.82) !important;
+  border-radius: 15px !important;
+  box-shadow: inset 0 1px 2px rgba(55,63,111,.035), inset 0 1px 0 rgba(255,255,255,.9), 0 4px 12px rgba(54,64,114,.025) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+:root.dark #app input[type=text], :root.dark #app input[type=password], :root.dark #app input[type=number], :root.dark #app input[type=search], :root.dark #app input[type=email], :root.dark #app textarea, :root.dark #app select {
+  background: linear-gradient(145deg, rgba(255,255,255,.085), rgba(255,255,255,.035)) !important;
+  border-color: rgba(255,255,255,.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 4px 14px rgba(0,0,0,.06) !important;
+}
+#app input:focus, #app textarea:focus, #app select:focus { border-color: rgba(122,109,243,.70) !important; box-shadow: 0 0 0 4px rgba(113,99,237,.13), inset 0 1px 0 rgba(255,255,255,.8) !important; }
+#app input::placeholder, #app textarea::placeholder { color: var(--text-muted) !important; }
+#app button:not(.sec):not(.ans):not(.filter-tab):not(.auth-tab):not(.footer-link):not(.btn-icon):not(.player-kick):not(.top-action):not(.danger-button) {
+  background: linear-gradient(125deg, rgba(255,255,255,.18), transparent 48%), linear-gradient(135deg, #8174f1 0%, #685be3 58%, #5d51cf 100%) !important;
+  border: 1px solid rgba(255,255,255,.45) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 18px rgba(95,79,210,.20), 0 2px 5px rgba(65,56,153,.10), inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(38,25,135,.10) !important;
+  font-weight: 690 !important;
+  transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, filter .2s ease !important;
+}
+#app button:not(.sec):not(.ans):not(.filter-tab):not(.auth-tab):not(.footer-link):not(.btn-icon):not(.player-kick):not(.top-action):not(.danger-button):hover {
+  filter: brightness(1.045) saturate(1.04) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 24px rgba(95,79,210,.24), inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
+#app button:disabled { filter: saturate(.55); box-shadow: none !important; }
+#app button.sec, #app .top-action, #app button.top-action, #app .quiz-card-actions button.sec, #app button.footer-link {
+  color: var(--text-main) !important;
+  background: linear-gradient(140deg, var(--lg-surface-strong), var(--lg-surface)) !important;
+  border: 1px solid var(--lg-border) !important;
+  border-radius: 13px !important;
+  box-shadow: 0 5px 15px rgba(52,59,102,.055), inset 0 1px 0 var(--lg-specular) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(140%);
+  backdrop-filter: blur(15px) saturate(140%);
+}
+#app button.sec:hover, #app .top-action:hover, #app button.top-action:hover {
+  background: linear-gradient(140deg, var(--lg-surface-strong), var(--lg-surface)) !important;
+  border-color: var(--lg-edge) !important;
+  box-shadow: 0 8px 21px rgba(52,59,102,.09), inset 0 1px 0 var(--lg-specular) !important;
+  transform: translateY(-1px) !important;
+}
+#app button.filter-tab { border-radius: 999px !important; transition: background .2s ease, box-shadow .2s ease, color .2s ease !important; }
+#app button.filter-tab.is-active { color: var(--accent-ink) !important; background: linear-gradient(135deg, rgba(255,255,255,.84), rgba(226,223,255,.56)) !important; border: 1px solid rgba(255,255,255,.88) !important; box-shadow: 0 4px 12px rgba(80,71,160,.10), inset 0 1px 0 #fff !important; }
+:root.dark #app button.filter-tab.is-active { color: #f0edff !important; background: linear-gradient(135deg, rgba(137,124,255,.34), rgba(95,84,190,.18)) !important; border-color: rgba(190,182,255,.22) !important; }
+#app .auth-tabs { background: rgba(129,128,177,.09) !important; border: 1px solid var(--lg-border); border-radius: 16px !important; padding: 5px; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+#app button.auth-tab.is-active { background: var(--lg-surface-strong) !important; border: 1px solid var(--lg-border) !important; box-shadow: 0 4px 12px rgba(52,59,102,.08), inset 0 1px 0 var(--lg-specular) !important; }
+#app .library-toolbar { border-radius: 20px !important; padding: 13px !important; }
+#app .library-search input { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+#app .library-search:focus-within { border-color: rgba(126,112,238,.5) !important; box-shadow: 0 0 0 4px rgba(113,99,237,.08), inset 0 1px 0 var(--lg-specular) !important; }
+#app .quiz-card-icon { border: 1px solid rgba(255,255,255,.70); box-shadow: inset 0 1px 0 rgba(255,255,255,.72), 0 5px 13px rgba(77,72,145,.08); }
+#app .empty-state { background: linear-gradient(145deg, var(--lg-surface-strong), var(--lg-surface)) !important; border: 1px dashed var(--lg-edge) !important; border-radius: 24px !important; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+#app .notice, #app .auth-alert { border-radius: 16px !important; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+#app .player-kick { border-radius: 999px !important; box-shadow: 0 2px 7px rgba(190,57,79,.12), inset 0 1px 0 rgba(255,255,255,.75); }
+
+/* The answer choices remain vivid so game rounds are instantly scannable. */
+#app .ans {
+  position: relative;
+  border: 1px solid rgba(255,255,255,.32) !important;
+  border-radius: 19px !important;
+  box-shadow: 0 9px 18px rgba(23,30,59,.16), inset 0 1px 0 rgba(255,255,255,.28), inset 0 -2px 0 rgba(0,0,0,.08) !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.11);
+  -webkit-backdrop-filter: blur(7px) saturate(130%);
+  backdrop-filter: blur(7px) saturate(130%);
+  transition: filter .18s ease, transform .18s ease, box-shadow .18s ease !important;
+}
+#app .ans:hover { transform: translateY(-2px) !important; box-shadow: 0 13px 24px rgba(23,30,59,.20), inset 0 1px 0 rgba(255,255,255,.38) !important; }
+#app .ans.sel { outline: 3px solid rgba(255,255,255,.96) !important; outline-offset: 2px; box-shadow: 0 0 0 6px rgba(111,96,230,.20), 0 12px 23px rgba(23,30,59,.19), inset 0 1px 0 rgba(255,255,255,.38) !important; }
+#app .ans.dim { filter: saturate(.6) brightness(.76); opacity: .8; }
+#app .ans:focus-visible { outline: 3px solid var(--accent) !important; outline-offset: 3px; }
+#app .cnt > div { border-radius: 14px 14px 5px 5px; box-shadow: 0 8px 18px rgba(35,42,82,.10), inset 0 1px 0 rgba(255,255,255,.3); }
+#app .pin { text-shadow: 0 4px 22px rgba(101,86,223,.18); letter-spacing: .12em; }
+#app .chips .chip { background: linear-gradient(135deg, var(--lg-surface-strong), var(--lg-surface)) !important; border: 1px solid var(--lg-border) !important; border-radius: 999px !important; box-shadow: inset 0 1px 0 var(--lg-specular), 0 4px 12px rgba(54,63,113,.045) !important; }
+
+/* Small polish and feedback */
+#app .section-kicker, #app .eyebrow { color: var(--accent-ink); }
+:root.dark #app .section-kicker, :root.dark #app .eyebrow { color: var(--accent); }
+#app .title-period, #app .home-title span, #app .auth-promo-title span { color: var(--accent) !important; }
+#app .preview-progress, #app .bar { backdrop-filter: blur(8px); }
+#app a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 7px; }
+#app button:focus-visible, #app input:focus-visible, #app select:focus-visible, #app textarea:focus-visible { outline-offset: 3px !important; }
+#app .dashboard-footer, #app .home-footer, #app .auth-promo-stamp { border-color: var(--lg-edge) !important; }
+#app .brand-copy span, #app .quiz-meta, #app .quiz-source-note { color: var(--text-muted); }
+
+@keyframes lg-ambient-drift {
+  0% { transform: translate3d(-.5%, -.2%, 0) scale(1); }
+  50% { transform: translate3d(.8%, .6%, 0) scale(1.025); }
+  100% { transform: translate3d(-.3%, .9%, 0) scale(1.01); }
+}
+@media (max-width: 720px) {
+  body::before { inset: -7vh -20vw; filter: blur(27px) saturate(120%); }
+  #app .app-topbar { border-radius: 19px !important; padding: 9px !important; }
+  #app .card, #app .entry-card, #app .auth-card, #app .home-guide { border-radius: 21px !important; }
+  #app .global-settings { margin-bottom: 13px !important; }
+  #app .quiz-card { border-radius: 18px !important; }
+}
+@media (max-width: 380px) {
+  #app .global-settings { width: 100% !important; justify-content: flex-end; }
+  #app .global-settings button.theme-toggle { max-width: 50%; }
+  #app .global-settings .language-picker { flex: 1 1 auto; min-width: 0; }
+  #app .global-settings select { min-width: 0; max-width: 100% !important; }
+}
+@supports not (backdrop-filter: blur(2px)) {
+  #app .card, #app .entry-card, #app .quiz-preview, #app .home-guide, #app .auth-card,
+  #app .stat-card, #app .quiz-card, #app .edit-settings-card, #app .edit-question-card,
+  #app .library-toolbar, #app .dashboard-user, #app .dashboard-user-inline,
+  #app .host-participant-panel, #app .host-participant, #app .editor-actions {
+    background: rgba(255,255,255,.92) !important;
+  }
+  :root.dark #app .card, :root.dark #app .entry-card, :root.dark #app .quiz-preview,
+  :root.dark #app .home-guide, :root.dark #app .auth-card, :root.dark #app .stat-card,
+  :root.dark #app .quiz-card, :root.dark #app .edit-settings-card, :root.dark #app .edit-question-card,
+  :root.dark #app .library-toolbar, :root.dark #app .dashboard-user, :root.dark #app .dashboard-user-inline,
+  :root.dark #app .host-participant-panel, :root.dark #app .host-participant, :root.dark #app .editor-actions {
+    background: rgba(26,31,51,.96) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none !important; }
+  #app .quiz-card, #app button { transition: none !important; }
+}
